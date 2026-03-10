@@ -8,5 +8,5 @@ Built for Vivado 2024.2 on Windows 11.
 
 
 
-!\[Waveform from thunderbird\_fsm\_tb](./waveform.png)
+![Waveform from thunderbird\_fsm\_tb](waveform.png)
 
