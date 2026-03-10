@@ -113,8 +113,23 @@ begin
 	f_Q_next(0) <= f_Q(1);
     ---------------------------------------------------------------------------------
 	
+	o_lights_L(0) <= f_Q(6) or f_Q(2) or f_Q(1) or f_Q(0); -- LA
+	o_lights_L(1) <= f_Q(6) or f_Q(1) or f_Q(0); -- LB
+	o_lights_L(2) <= f_Q(6) or f_Q(0); -- LC
+	
+	o_lights_R(0) <= f_Q(6) or f_Q(5) or f_Q(4) or f_Q(3); -- RA
+    o_lights_R(1) <= f_Q(6) or f_Q(4) or f_Q(3); -- RB
+    o_lights_R(2) <= f_Q(6) or f_Q(3); -- RC
 	-- PROCESSES --------------------------------------------------------------------
-    
+    register_proc : process (i_clk, i_reset)
+	begin
+			--Reset state is yellow
+		    if i_reset = '1' then
+		      f_Q <= "10";
+		    elsif (rising_edge(i_clk)) then
+		      f_Q <= f_Q_next;
+		    end if;
+	end process register_proc;
 	-----------------------------------------------------					   
 				  
 end thunderbird_fsm_arch;
