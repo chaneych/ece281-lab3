@@ -156,7 +156,7 @@ begin
        wait for k_clk_period;
        assert (w_lights_L = "011") report "Error: Mid-sequence switch did not continue to L2" severity failure;
        wait for k_clk_period;
-       assert (w_lights_L = "111") report "Error: Mid-sequence switch did not continue to L3" severity falilure;
+       assert (w_lights_L = "111") report "Error: Mid-sequence switch did not continue to L3" severity failure;
        wait for k_clk_period;
        
        -- Drop switch mid-sequence (Right)
@@ -168,7 +168,7 @@ begin
        wait for k_clk_period;
        assert (w_lights_R = "011") report "Error: Mid-sequence switch did not continue to R2" severity failure;
        wait for k_clk_period;
-       assert (w_lights_R = "111") report "Error: Mid-sequence switch did not continue to R3" severity falilure;
+       assert (w_lights_R = "111") report "Error: Mid-sequence switch did not continue to R3" severity failure;
        wait for k_clk_period;
        
        wait;
