@@ -103,7 +103,7 @@ architecture thunderbird_fsm_arch of thunderbird_fsm is
 begin
 
 	-- CONCURRENT STATEMENTS --------------------------------------------------------	
-	f_Q_next(7) <= (f_Q(7) and not i_left and not i_right) or f_Q(6) or f_Q(3);
+	f_Q_next(7) <= (f_Q(7) and not i_left and not i_right) or f_Q(6) or f_Q(3) or f_Q(0);
 	f_Q_next(6) <= f_Q(7) and i_left and i_right;
 	f_Q_next(5) <= f_Q(7) and not i_left and i_right;
 	f_Q_next(4) <= f_Q(5);
@@ -121,13 +121,14 @@ begin
     o_lights_R(1) <= f_Q(6) or f_Q(4) or f_Q(3); -- RB
     o_lights_R(2) <= f_Q(6) or f_Q(3); -- RC
 	-- PROCESSES --------------------------------------------------------------------
-    register_proc : process (i_clk, i_reset)
+    register_proc : process (i_clk)
 	begin
-			--Reset state is yellow
-		    if i_reset = '1' then
-		      f_Q <= "10";
-		    elsif (rising_edge(i_clk)) then
-		      f_Q <= f_Q_next;
+		    if rising_edge(i_clk) then
+		      if i_reset = '1' then
+		          f_Q <= "10000000";
+		      else
+		          f_Q <= f_Q_next;
+		      end if;
 		    end if;
 	end process register_proc;
 	-----------------------------------------------------					   
