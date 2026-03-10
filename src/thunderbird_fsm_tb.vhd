@@ -133,7 +133,7 @@ begin
 	   assert (w_lights_R = "111") report "Error: Step 3 of Right Turn failed" severity failure;
 	   wait for k_clk_period;
 	   assert (w_lights_R = "000") report "Error: Right Turn did not reset to OFF after cycling" severity failure;
-	   w_left <= '0';
+	   w_right <= '0';
 	   wait for k_clk_period;
 	   
 	   -- Hazard Lights
