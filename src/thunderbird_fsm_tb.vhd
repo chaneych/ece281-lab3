@@ -73,20 +73,95 @@ architecture test_bench of thunderbird_fsm_tb is
 	signal w_lights_L : std_logic_vector(2 downto 0);
 	signal w_lights_R : std_logic_vector(2 downto 0);
 	-- constants
-	
+	constant k_clk_period : time := 10 ns;
 	
 begin
 	-- PORT MAPS ----------------------------------------
-	
+	uut: thunderbird_fsm port map (
+        i_clk      => w_clk,
+        i_reset    => w_reset,
+        i_left     => w_left,
+        i_right    => w_right,
+        o_lights_L => w_lights_L,
+        o_lights_R => w_lights_R
+    );
 	-----------------------------------------------------
 	
 	-- PROCESSES ----------------------------------------	
     -- Clock process ------------------------------------
-    
+    clk_proc : process
+	begin
+		w_clk <= '0';
+        wait for k_clk_period/2;
+		w_clk <= '1';
+		wait for k_clk_period/2;
+	end process;
 	-----------------------------------------------------
 	
 	-- Test Plan Process --------------------------------
-	
+	test_proc : process
+	begin
+	   -- Start in OFF
+	   w_reset <= '1';
+	   wait for k_clk_period;
+	   assert(w_lights_L = "000" and w_lights_R = "000") report "Error: Lights were not OFF after reset" severity failure;
+	   w_reset <= '0';
+	   wait for k_clk_period;
+	   
+	   -- Left Turn Sequence
+	   w_left <= '1';
+	   w_right <= '0';
+	   wait for k_clk_period;
+	   assert (w_lights_L = "001") report "Error: Step 1 of Left Turn failed" severity failure;
+	   wait for k_clk_period;
+	   assert (w_lights_L = "011") report "Error: Step 2 of Left Turn failed" severity failure;
+	   wait for k_clk_period;
+	   assert (w_lights_L = "111") report "Error: Step 3 of Left Turn failed" severity failure;
+	   wait for k_clk_period;
+	   assert (w_lights_L = "000") report "Error: Left Turn did not reset to OFF after cycling" severity failure;
+	   w_left <= '0';
+	   wait for k_clk_period;
+	   
+	   -- Right Turn Sequence
+	   w_left <= '0';
+	   w_right <= '1';
+	   wait for k_clk_period;
+	   assert (w_lights_R = "001") report "Error: Step 1 of Right Turn failed" severity failure;
+	   wait for k_clk_period;
+	   assert (w_lights_R = "011") report "Error: Step 2 of Right Turn failed" severity failure;
+	   wait for k_clk_period;
+	   assert (w_lights_R = "111") report "Error: Step 3 of Right Turn failed" severity failure;
+	   wait for k_clk_period;
+	   assert (w_lights_R = "000") report "Error: Right Turn did not reset to OFF after cycling" severity failure;
+	   w_left <= '0';
+	   wait for k_clk_period;
+	   
+	   -- Hazard Lights
+	   w_left <= '1';
+	   w_right <= '1';
+       wait for k_clk_period;
+       assert (w_lights_L = "111" and w_lights_R = "111") report "Error: Hazard ON failed" severity failure;
+       wait for k_clk_period;
+       assert (w_lights_L = "000" and w_lights_R = "000") report "Error: Hazard OFF failed" severity failure;
+       w_left <= '0';
+       w_right <= '0';
+       wait for k_clk_period;
+       
+       -- Drop switch mid-sequence
+	   w_left <= '1';
+	   w_right <= '0';
+       wait for k_clk_period;
+       assert (w_lights_L = "001") report "Error: Mid-sequence switch test did not start properly" severity failure;
+       w_left <= '0';
+       wait for k_clk_period;
+       assert (w_lights_L = "011") report "Error: Mid-sequence switch did not continue to L2" severity failure;
+       wait for k_clk_period;
+       assert (w_lights_L = "111") report "Error: Mid-sequence switch did not continue to L3" severity falilure;
+       wait for k_clk_period;
+       
+       wait;
+      end process;
+	   
 	-----------------------------------------------------	
 	
 end test_bench;
